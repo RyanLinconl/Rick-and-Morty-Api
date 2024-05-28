@@ -10,11 +10,19 @@ const CharacterList = () => {
     useEffect(() => {
         //Função para buscar dados da API
         const fetchCharacters = async () => {
-            try {
-                const response = await fetch(`https://rickandmortyapi.com/api/character?page=${page}`);
+          try {
+            let allCharacters = [];
+            let page = 1;
+            let totalPages = 1; // Inicializa com 1 para entrar no loop
+            // Loop até que todas as páginas tenham sido buscadas
+            while (page <= totalPages) {
+                const response = await fetch(`https://rickandmortyapi.com/api/character?page=${page}&name=${searchQuery}`);
                 const data = await response.json();
-                setCharacters(data.results);
-                setFilteredCharacters(data.results);
+                allCharacters = [...allCharacters, ...data.results];
+                totalPages = data.info.pages;
+                page++;
+            }
+            setCharacters(allCharacters);
             } catch (error) {
                 console.error('Erro ao buscar personagens:', error)
             }
